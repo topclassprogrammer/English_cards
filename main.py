@@ -113,3 +113,30 @@ def count_user_words(message):
     """Получаем кол-во слов в личном словаре пользователя"""
     return session.query(func.count(Users_words.user_id)).filter(
         Users_words.user_id == get_user_id(message).c.user_id).one()[0]
+
+
+def get_common_eng_words():
+    """Получаем список английских слов в общем словаре"""
+    res = []
+    common_eng_words = session.query(Words.eng_word).filter(
+        Words.common_word == True).all()
+    [res.append(word[0]) for word in common_eng_words]
+    return res
+
+
+def get_user_eng_words(message):
+    """Получаем список английских слов в словаре пользователя"""
+    res = []
+    user_eng_words = session.query(Words.eng_word).join(Users_words).filter(
+        get_user_id(message).c.user_id == Users_words.user_id).all()
+    [res.append(word[0]) for word in user_eng_words]
+    return res
+
+
+def get_eng_words(message):
+    """Получаем список всех английских слов, имеющихся в общем словаре
+     и словаре пользователя"""
+    res = []
+    res += get_common_eng_words() + get_user_eng_words(message)
+    random.shuffle(res)
+    return res
