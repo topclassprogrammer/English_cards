@@ -33,3 +33,19 @@ ENG_WORD_CHARS = ascii_letters + whitespace + '-'
 RUS_LOWER_CHARS = 'йцукенгшщзхъфывапролджэячсмитьбю'
 RUS_WORD_CHARS = RUS_LOWER_CHARS + RUS_LOWER_CHARS.upper() + whitespace + '-'
 
+
+def create_db():
+    """Создаем БД"""
+    try:
+        DSN = f"{PROTOCOL}://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}"
+        engine = create_engine(DSN)
+        if not database_exists(engine.url):
+            create_database(engine.url)
+        Session = sessionmaker(bind=engine)
+        global session
+        session = Session()
+        create_tables(engine)
+    except (exc.OperationalError,
+            exc.ArgumentError) as err:
+        print('Incorrect DSN string', err)
+        sys.exit()
