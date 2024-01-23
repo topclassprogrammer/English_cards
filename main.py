@@ -218,3 +218,12 @@ def create_cards(message):
 def next_cards(message):
     """Создает новую карточку слов"""
     create_cards(message)
+
+
+@bot.message_handler(func=lambda message: message.text == Command.ADD_WORD)
+def input_eng_word_to_add(message):
+    """Ввод нового английского слова для добавления в словарь пользователя"""
+    msg = "Введите новое английское слово"
+    bot.send_message(message.chat.id, msg)
+    bot.set_state(message.from_user.id, BotStates.check_eng_word_to_add,
+                  message.chat.id)
