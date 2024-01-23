@@ -282,3 +282,25 @@ def check_rus_word_to_add(message):
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         data['new_rus_word'] = prepared_word
     add_new_row(message)
+
+
+@bot.message_handler(state=BotStates.new_row)
+def add_new_row(message):
+    """Запись пары слов в БД"""
+    with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+        new_eng_word = data['new_eng_word']
+        new_rus_word = data['new_rus_word']
+    user_id = session.query(Users.user_id).filter(
+        Users.telegram_id == message.from_user.id).one()[0]
+    words_row = session.execute(insert(Words).returning(Words.word_id),
+                                [{'eng_word': new_eng_word,
+                                  'rus_word': new_rus_word,
+                                  'common_word': False}])
+    new_eng_word_id = words_row.fetchone()[0]
+    users_words_row = Users_words(user_id=user_id, word_id=new_eng_word_id)
+    session.add(users_words_row)
+    session.commit()
+    msg = ("Слова успешно добавлены!\nКол-во слов в вашем личном словаре: "
+           f"{count_user_words(message)}")
+    bot.send_message(message.chat.id, msg)
+    bot.delete_state(message.from_user.id, message.chat.id)
