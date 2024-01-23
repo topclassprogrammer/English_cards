@@ -49,3 +49,18 @@ def create_db():
             exc.ArgumentError) as err:
         print('Incorrect DSN string', err)
         sys.exit()
+
+
+def read_json():
+    """Считываем JSON файл"""
+    if DB_DATA not in os.listdir():
+        print(f'DB data file name {DB_DATA} '
+              f'not found in the project folder {os.getcwd()}')
+        sys.exit()
+    with open(DB_DATA, 'r', encoding='utf-8') as f:
+        try:
+            data = json.load(f)
+        except json.decoder.JSONDecodeError as err:
+            print(f'Incorrect JSON data in {DB_DATA}', err)
+            sys.exit()
+    return data
