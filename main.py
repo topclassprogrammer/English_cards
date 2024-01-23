@@ -227,3 +227,26 @@ def input_eng_word_to_add(message):
     bot.send_message(message.chat.id, msg)
     bot.set_state(message.from_user.id, BotStates.check_eng_word_to_add,
                   message.chat.id)
+
+
+@bot.message_handler(state=BotStates.check_eng_word_to_add)
+def check_eng_word_to_add(message):
+    """Проверка перед добавлением нового английского слова на
+    корректность символов и присутствие в словаре пользователя"""
+    prepared_word = message.text.lower().capitalize().strip()
+    if not set(message.text) < set(ascii_letters + whitespace + '-'):
+        msg = ("Вы некорректно ввели английское слово. В слове должны "
+               "присутствовать только буквы английского алфавита.\n"
+               "Попробуйте еще раз.")
+        bot.send_message(message.chat.id, msg)
+        return
+    elif prepared_word in get_eng_words(message):
+        msg = ("Данное слово '{prepared_word}' уже есть в словаре.\n"
+               "Вы должны ввести слово, которого нет в словаре.")
+        bot.send_message(message.chat.id, msg)
+        return
+    bot.set_state(message.from_user.id, BotStates.input_rus_word_to_add,
+                  message.chat.id)
+    with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+        data['new_eng_word'] = prepared_word
+    input_rus_word_to_add(message)
