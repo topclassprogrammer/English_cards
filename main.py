@@ -304,3 +304,13 @@ def add_new_row(message):
            f"{count_user_words(message)}")
     bot.send_message(message.chat.id, msg)
     bot.delete_state(message.from_user.id, message.chat.id)
+
+
+@bot.message_handler(func=lambda message: message.text == Command.DELETE_WORD)
+def input_eng_word_to_delete(message):
+    """Ввод английского слова для удаления из словаря пользователя"""
+    msg = ("Введите английское слово, которое вы хотите "
+           "удалить из своего словаря")
+    bot.send_message(message.chat.id, msg)
+    bot.set_state(message.from_user.id, BotStates.check_eng_word_to_delete,
+                  message.chat.id)
