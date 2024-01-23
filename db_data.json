@@ -1,0 +1,13 @@
+[
+  {"model": "Words", "pk": 1, "fields": {"eng_word": "Green", "rus_word": "Зеленый", "common_word": true}},
+  {"model": "Words", "pk": 2, "fields": {"eng_word": "Yellow", "rus_word": "Желтый", "common_word": true}},
+  {"model": "Words", "pk": 3, "fields": {"eng_word": "She", "rus_word": "Она", "common_word": true}},
+  {"model": "Words", "pk": 4, "fields": {"eng_word": "This", "rus_word": "Этот", "common_word": true}},
+  {"model": "Words", "pk": 5, "fields": {"eng_word": "Apple", "rus_word": "Яблоко", "common_word": true}},
+  {"model": "Words", "pk": 6, "fields": {"eng_word": "Orange", "rus_word": "Апельсин", "common_word": true}},
+  {"model": "Words", "pk": 7, "fields": {"eng_word": "Bird", "rus_word": "Птица", "common_word": true}},
+  {"model": "Words", "pk": 8, "fields": {"eng_word": "Animal", "rus_word": "Животное", "common_word": true}},
+  {"model": "Words", "pk": 9, "fields": {"eng_word": "Nose", "rus_word": "Нос", "common_word": true}},
+  {"model": "Words", "pk": 10, "fields": {"eng_word": "Head", "rus_word": "Голова", "common_word": true}}
+]
+
