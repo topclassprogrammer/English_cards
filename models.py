@@ -36,4 +36,7 @@ class Users_words(Base):
     users = relationship('Users', back_populates='words')
 
 
-
+def create_tables(engine):
+    """Очистка и создание новых таблиц в БД"""
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
