@@ -185,3 +185,30 @@ def start(message):
         session.commit()
         msg = "Hello, stranger, let's study English..."
         bot.send_message(message.chat.id, msg)
+
+
+@bot.message_handler(commands=['cards'])
+def create_cards(message):
+    """Создает карточку из семи кнопок: 4 кнопки это
+    возможные варианты ответов, а 3 - это кнопки-действия"""
+    translate_word = get_rus_words(message)[0]
+    target_word = session.query(Words.eng_word).filter(
+        Words.rus_word == translate_word).one()[0]
+    random_eng_words = []
+    for word in get_eng_words(message):
+        if len(random_eng_words) < 3 and word != target_word:
+            random_eng_words.append(word)
+    buttons_text = []
+    buttons_text += [target_word] + random_eng_words
+    random.shuffle(buttons_text)
+    buttons_text += [Command.NEXT, Command.ADD_WORD, Command.DELETE_WORD]
+    global buttons
+    buttons = [types.KeyboardButton(text=button) for button in buttons_text]
+    cards = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    cards.add(*buttons)
+    msg = f"Как переводится слово '{translate_word}'?"
+    bot.send_message(message.chat.id, msg, reply_markup=cards)
+    bot.set_state(message.from_user.id, BotStates.target_word, message.chat.id)
+    with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+        data['target_word'] = target_word
+        data['translate_word'] = translate_word
