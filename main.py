@@ -15,3 +15,21 @@ from telebot.apihelper import ApiTelegramException
 
 from bot_classes import Command, BotStates
 from models import Words, Users, Users_words, create_tables
+
+
+DB_DATA = 'db_data.json'
+
+env = Env()
+env.read_env()
+PROTOCOL = env('PROTOCOL')
+USER = env('USER')
+PASSWORD = env.int('PASSWORD')
+HOST = env('HOST')
+PORT = env.int('PORT')
+DB_NAME = env('DB_NAME')
+TOKEN = env('TOKEN')
+
+ENG_WORD_CHARS = ascii_letters + whitespace + '-'
+RUS_LOWER_CHARS = 'йцукенгшщзхъфывапролджэячсмитьбю'
+RUS_WORD_CHARS = RUS_LOWER_CHARS + RUS_LOWER_CHARS.upper() + whitespace + '-'
+
