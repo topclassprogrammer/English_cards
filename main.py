@@ -140,3 +140,30 @@ def get_eng_words(message):
     res += get_common_eng_words() + get_user_eng_words(message)
     random.shuffle(res)
     return res
+
+
+def get_common_rus_words():
+    """Получаем список русских слов в общем словаре"""
+    res = []
+    common_rus_words = session.query(Words.rus_word).filter(
+        Words.common_word == True).all()
+    [res.append(word[0]) for word in common_rus_words]
+    return res
+
+
+def get_user_rus_words(message):
+    """Получаем список русских слов в словаре пользователя"""
+    res = []
+    user_rus_words = session.query(Words.rus_word).join(Users_words).filter(
+        get_user_id(message).c.user_id == Users_words.user_id).all()
+    [res.append(word[0]) for word in user_rus_words]
+    return res
+
+
+def get_rus_words(message):
+    """Получаем список всех русских слов, имеющихся в общем словаре
+     и словаре пользователя"""
+    res = []
+    res += get_common_rus_words() + get_user_rus_words(message)
+    random.shuffle(res)
+    return res
