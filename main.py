@@ -101,3 +101,15 @@ def get_user_id(message):
     """Получаем ID пользователя"""
     return session.query(Users).filter(
         Users.telegram_id == message.from_user.id).subquery()
+
+
+def count_common_words():
+    """Получаем кол-во слов в общем словаре"""
+    return session.query(func.count(Words.word_id)).filter(
+        Words.common_word == True).one()[0]
+
+
+def count_user_words(message):
+    """Получаем кол-во слов в личном словаре пользователя"""
+    return session.query(func.count(Users_words.user_id)).filter(
+        Users_words.user_id == get_user_id(message).c.user_id).one()[0]
