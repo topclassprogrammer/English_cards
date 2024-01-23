@@ -64,3 +64,23 @@ def read_json():
             print(f'Incorrect JSON data in {DB_DATA}', err)
             sys.exit()
     return data
+
+
+def make_rows():
+    """Заполняем БД записями из JSON-файла"""
+    try:
+        for el in read_json():
+            if 'Words' == el['model']:
+                session.add(Words(eng_word=el['fields']['eng_word'],
+                                  rus_word=el['fields']['rus_word'],
+                                  common_word=el['fields']['common_word']))
+            elif 'Users' == el['model']:
+                session.add(Users(telegram_id=el['fields']['telegram_id']))
+            elif 'Users_words' == el['model']:
+                session.add(Users_words(user_id=el['fields']['user_id'],
+                                        word_id=el['fields']['word_id']))
+    except KeyError as err:
+        print(f'Incorrect key {err} while trying to get it in '
+              f'FOR loop')
+        sys.exit()
+    session.commit()
