@@ -212,3 +212,9 @@ def create_cards(message):
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         data['target_word'] = target_word
         data['translate_word'] = translate_word
+
+
+@bot.message_handler(func=lambda message: message.text == Command.NEXT)
+def next_cards(message):
+    """Создает новую карточку слов"""
+    create_cards(message)
