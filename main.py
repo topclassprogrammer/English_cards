@@ -346,3 +346,32 @@ def check_eng_word_to_delete(message):
                "Попробуйте еще раз.")
         bot.send_message(message.chat.id, msg)
     return
+
+
+@bot.message_handler(state=BotStates.target_word)
+def check_target_word(message):
+    """Проверка корректно выбранного слова из карточки"""
+    prepared_word = message.text.lower().capitalize().strip()
+    with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+        target_word = data['target_word']
+        translate_word = data['translate_word']
+    cards = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    if prepared_word == target_word or '✅' in prepared_word:
+        for button in buttons[:4]:
+            if button.text == prepared_word and '✅' not in button.text:
+                button.text = prepared_word + '✅'
+                cards.add(*buttons)
+                break
+        msg = (f"Поздравляем!🎉 Это правильный ответ✅\n{target_word} => "
+               f"{translate_word}\nЧтобы продолжить нажмите {Command.NEXT}")
+        bot.send_message(message.chat.id, msg, reply_markup=cards)
+    else:
+        for button in buttons[:4]:
+            if button.text == prepared_word and '❌' not in button.text and \
+                    '✅' not in button.text:
+                button.text = prepared_word + '❌'
+                cards.add(*buttons)
+                break
+        msg = "Неправильный ответ❌ Попробуйте еще раз."
+        bot.send_message(message.chat.id, msg, reply_markup=cards)
+
