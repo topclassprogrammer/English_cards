@@ -314,3 +314,35 @@ def input_eng_word_to_delete(message):
     bot.send_message(message.chat.id, msg)
     bot.set_state(message.from_user.id, BotStates.check_eng_word_to_delete,
                   message.chat.id)
+
+
+@bot.message_handler(state=BotStates.check_eng_word_to_delete)
+def check_eng_word_to_delete(message):
+    """Проверка перед удалением английского слова на
+    корректность символов и присутствие в словаре пользователя"""
+    prepared_word = message.text.lower().capitalize().strip()
+    if not set(message.text) < set(ENG_WORD_CHARS):
+        msg = ("Вы некорректно ввели английское слово. В слове должны "
+               "присутствовать только буквы английского алфавита.\n"
+               "Попробуйте еще раз.")
+        bot.send_message(message.chat.id, msg)
+    elif prepared_word in get_common_eng_words():
+        msg = ("Вы не можете удалить английское слово из общего словаря\n"
+               "Вы должны ввести английское слово из своего словаря.\n"
+               "Попробуйте еще раз.")
+        bot.send_message(message.chat.id, msg)
+    elif prepared_word in get_user_eng_words(message):
+        subq = session.query(Words.word_id).join(Users_words).filter(
+            Users_words.user_id == get_user_id(message).c.user_id).subquery()
+        session.query(Words).filter(Words.word_id == subq.c.word_id,
+                                    Words.eng_word == prepared_word).delete()
+        session.commit()
+        msg = (f"Запись со словом {prepared_word} успешно удалена из "
+               "словаря пользователя")
+        bot.send_message(message.chat.id, msg)
+        bot.delete_state(message.from_user.id, message.chat.id)
+    else:
+        msg = (f"Слово {prepared_word} не обнаружено в словаре.\n"
+               "Попробуйте еще раз.")
+        bot.send_message(message.chat.id, msg)
+    return
