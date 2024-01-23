@@ -84,3 +84,14 @@ def make_rows():
               f'FOR loop')
         sys.exit()
     session.commit()
+
+
+# Создаем объект класса TeleBot
+try:
+    TOKEN = env('TOKEN')
+except ApiTelegramException as err:
+    print(f'Invalid token {TOKEN}', err)
+    sys.exit()
+else:
+    state_storage = StateMemoryStorage()
+    bot = TeleBot(TOKEN, state_storage=state_storage)
