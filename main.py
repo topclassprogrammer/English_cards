@@ -95,3 +95,9 @@ except ApiTelegramException as err:
 else:
     state_storage = StateMemoryStorage()
     bot = TeleBot(TOKEN, state_storage=state_storage)
+
+
+def get_user_id(message):
+    """Получаем ID пользователя"""
+    return session.query(Users).filter(
+        Users.telegram_id == message.from_user.id).subquery()
