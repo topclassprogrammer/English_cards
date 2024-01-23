@@ -250,3 +250,13 @@ def check_eng_word_to_add(message):
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         data['new_eng_word'] = prepared_word
     input_rus_word_to_add(message)
+
+
+@bot.message_handler(state=BotStates.input_rus_word_to_add)
+def input_rus_word_to_add(message):
+    """Ввод русского перевода для введенного английского слова для добавления
+    в словарь пользователя"""
+    msg = "Введите русский перевод для введенного английского слова"
+    bot.send_message(message.chat.id, msg)
+    bot.set_state(message.from_user.id, BotStates.check_rus_word_to_add,
+                  message.chat.id)
