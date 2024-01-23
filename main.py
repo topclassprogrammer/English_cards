@@ -375,3 +375,11 @@ def check_target_word(message):
         msg = "Неправильный ответ❌ Попробуйте еще раз."
         bot.send_message(message.chat.id, msg, reply_markup=cards)
 
+
+bot.add_custom_filter(custom_filters.StateFilter(bot))
+
+if __name__ == '__main__':
+    create_db()
+    read_json()
+    make_rows()
+    bot.infinity_polling()
