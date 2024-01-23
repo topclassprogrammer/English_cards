@@ -167,3 +167,21 @@ def get_rus_words(message):
     res += get_common_rus_words() + get_user_rus_words(message)
     random.shuffle(res)
     return res
+
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    """Вывод приветственного сообщения по команде /start"""
+    msg = (
+        "Привет 👋 Давай попрактикуемся в английском языке.\n"
+        "Тренировки можешь проходить в удобном для себя темпе. "
+        "У тебя есть возможность использовать тренажёр, как конструктор, "
+        "и собирать свою собственную базу для обучения.\n"
+        "Чтобы начать тренировку воспользуйтесь командой /cards")
+    bot.send_message(message.chat.id, msg)
+    users = session.query(Users.telegram_id).all()
+    if (message.from_user.id,) not in users:
+        session.add(Users(telegram_id=message.from_user.id))
+        session.commit()
+        msg = "Hello, stranger, let's study English..."
+        bot.send_message(message.chat.id, msg)
